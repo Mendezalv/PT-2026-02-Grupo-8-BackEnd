@@ -1,0 +1,91 @@
+// ==============================================================================
+// PROCESSO TRAINEE CJR 2026.2 - GRUPO 8
+// DBML (Database Markup Language) para dbdiagram.io / dbdocs.io
+// Baseado no anexo da atividade
+// ==============================================================================
+
+Table usuarios {
+  id integer [pk, increment]
+  username varchar(50) [not null, unique]
+  nome varchar(255) [not null]
+  email varchar(255) [not null, unique]
+  senha_hash varchar(255) [not null]
+  foto_perfil_url varchar(255)
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+Table lojas {
+  id integer [pk, increment]
+  usuario_id integer [not null, ref: > usuarios.id]
+  nome varchar(255) [not null]
+  descricao text
+  logo_url varchar(255)
+  banner_url varchar(255)
+  sticker_url varchar(255)
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+Table categorias {
+  id integer [pk, increment]
+  nome varchar(100) [not null]
+  categoria_pai_id integer [ref: > categorias.id]
+}
+
+Table produtos {
+  id integer [pk, increment]
+  loja_id integer [not null, ref: > lojas.id]
+  categoria_id integer [not null, ref: > categorias.id]
+  nome varchar(255) [not null]
+  descricao text
+  preco decimal(10,2) [not null]
+  estoque integer [not null, default: 0]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}
+
+Table imagens_produto {
+  id integer [pk, increment]
+  produto_id integer [not null, ref: > produtos.id]
+  url_imagem varchar(255) [not null]
+  ordem integer [not null, default: 1]
+}
+
+Table avaliacoes_produto {
+  id integer [pk, increment]
+  usuario_id integer [not null, ref: > usuarios.id]
+  produto_id integer [not null, ref: > produtos.id]
+  nota integer [not null]
+  comentario text
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+
+  indexes {
+    (usuario_id, produto_id) [unique]
+  }
+}
+
+Table avaliacoes_loja {
+  id integer [pk, increment]
+  usuario_id integer [not null, ref: > usuarios.id]
+  loja_id integer [not null, ref: > lojas.id]
+  nota integer [not null]
+  comentario text
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+
+  indexes {
+    (usuario_id, loja_id) [unique]
+  }
+}
+
+Table comentarios_avaliacao {
+  id integer [pk, increment]
+  usuario_id integer [not null, ref: > usuarios.id]
+  avaliacao_loja_id integer [ref: > avaliacoes_loja.id]
+  avaliacao_produto_id integer [ref: > avaliacoes_produto.id]
+  conteudo text [not null]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null, default: `now()`]
+}

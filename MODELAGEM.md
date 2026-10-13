@@ -37,8 +37,8 @@ erDiagram
         varchar email UK
         varchar senha_hash
         varchar foto_perfil_url
-        timestamp createdAt
-        timestamp updatedAt
+        timestamp created_at
+        timestamp updated_at
     }
 
     lojas {
@@ -49,8 +49,8 @@ erDiagram
         varchar logo_url
         varchar banner_url
         varchar sticker_url
-        timestamp createdAt
-        timestamp updatedAt
+        timestamp created_at
+        timestamp updated_at
     }
 
     categorias {
@@ -67,8 +67,8 @@ erDiagram
         text descricao
         decimal preco
         integer estoque
-        timestamp createdAt
-        timestamp updatedAt
+        timestamp created_at
+        timestamp updated_at
     }
 
     imagens_produto {
@@ -84,8 +84,8 @@ erDiagram
         integer produto_id FK
         integer nota
         text comentario
-        timestamp createdAt
-        timestamp updatedAt
+        timestamp created_at
+        timestamp updated_at
     }
 
     avaliacoes_loja {
@@ -94,8 +94,8 @@ erDiagram
         integer loja_id FK
         integer nota
         text comentario
-        timestamp createdAt
-        timestamp updatedAt
+        timestamp created_at
+        timestamp updated_at
     }
 
     comentarios_avaliacao {
@@ -104,8 +104,8 @@ erDiagram
         integer avaliacao_loja_id FK
         integer avaliacao_produto_id FK
         text conteudo
-        timestamp createdAt
-        timestamp updatedAt
+        timestamp created_at
+        timestamp updated_at
     }
 ```
 
@@ -124,8 +124,8 @@ Armazena as informações de identificação, acesso e perfil dos usuários.
 | email | VARCHAR(255) | NOT NULL, UNIQUE | Endereço de e-mail de acesso |
 | senha_hash | VARCHAR(255) | NOT NULL | Hash criptográfico da credencial |
 | foto_perfil_url | VARCHAR(255) | NULL | URL da imagem de perfil |
-| createdAt | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo de data/hora de criação |
-| updatedAt | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo de data/hora da última atualização |
+| created_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo de data/hora de criação |
+| updated_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo de data/hora da última atualização |
 
 ### 2. lojas
 Dados das lojas comerciais mantidas pelos usuários da plataforma.
@@ -139,8 +139,8 @@ Dados das lojas comerciais mantidas pelos usuários da plataforma.
 | logo_url | VARCHAR(255) | NULL | URL da logomarca |
 | banner_url | VARCHAR(255) | NULL | URL do banner de destaque |
 | sticker_url | VARCHAR(255) | NULL | URL do badge ou sticker visual da loja |
-| createdAt | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo de criação |
-| updatedAt | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo da última atualização |
+| created_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo de criação |
+| updated_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo da última atualização |
 
 ### 3. categorias
 Estrutura hierárquica de categorização de produtos.
@@ -163,8 +163,8 @@ Catálogo de itens vinculados às lojas e classificados por categoria.
 | descricao | TEXT | NULL | Descrição detalhada das características do item |
 | preco | DECIMAL(10,2) | NOT NULL, CHECK (preco >= 0) | Preço unitário em moeda |
 | estoque | INTEGER | NOT NULL, DEFAULT 0, CHECK (estoque >= 0) | Saldo de estoque disponível |
-| createdAt | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo de criação |
-| updatedAt | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo da última atualização |
+| created_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo de criação |
+| updated_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo da última atualização |
 
 ### 5. imagens_produto
 Galeria de mídias de produtos cadastrados.
@@ -186,8 +186,8 @@ Notas e comentários submetidos por usuários a produtos específicos.
 | produto_id | INTEGER | NOT NULL, FK (produtos.id) | Produto avaliado |
 | nota | INTEGER | NOT NULL, CHECK (nota BETWEEN 1 AND 5) | Nota quantitativa de 1 a 5 |
 | comentario | TEXT | NULL | Texto opinativo opcional |
-| createdAt | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo de criação |
-| updatedAt | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo da última atualização |
+| created_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo de criação |
+| updated_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo da última atualização |
 
 Restrição de unicidade: `UNIQUE (usuario_id, produto_id)` para limitar cada usuário a uma avaliação por produto.
 
@@ -201,8 +201,8 @@ Notas e comentários submetidos por usuários sobre a operação e atendimento d
 | loja_id | INTEGER | NOT NULL, FK (lojas.id) | Loja avaliada |
 | nota | INTEGER | NOT NULL, CHECK (nota BETWEEN 1 AND 5) | Nota quantitativa de 1 a 5 |
 | comentario | TEXT | NULL | Texto opinativo opcional |
-| createdAt | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo de criação |
-| updatedAt | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo da última atualização |
+| created_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo de criação |
+| updated_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo da última atualização |
 
 Restrição de unicidade: `UNIQUE (usuario_id, loja_id)` para limitar cada usuário a uma avaliação por loja.
 
@@ -216,8 +216,8 @@ Comentários ou respostas direcionados a avaliações existentes de produtos ou 
 | avaliacao_loja_id | INTEGER | NULL, FK (avaliacoes_loja.id) | Chave estrangeira para avaliação de loja |
 | avaliacao_produto_id | INTEGER | NULL, FK (avaliacoes_produto.id) | Chave estrangeira para avaliação de produto |
 | conteudo | TEXT | NOT NULL | Texto da resposta |
-| createdAt | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo de criação |
-| updatedAt | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo da última atualização |
+| created_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo de criação |
+| updated_at | TIMESTAMP | NOT NULL, DEFAULT NOW() | Carimbo da última atualização |
 
 Restrição de integridade: Validação por restrição `CHECK` para garantir exclusividade da chave estrangeira de origem:
 ```sql
@@ -227,6 +227,56 @@ CHECK (
     (avaliacao_loja_id IS NULL AND avaliacao_produto_id IS NOT NULL)
 )
 ```
+
+---
+
+## Estratégia de Indexação e Desempenho
+
+Para otimizar o tempo de busca em consultas relacionais frequentes (como busca de produtos por loja, filtragem por categoria e listagem de avaliações), foram definidos índices explícitos em todas as chaves estrangeiras:
+
+| Tabela | Coluna Indexada | Identificador no Banco | Diretiva Prisma |
+|---|---|---|---|
+| `lojas` | `usuario_id` | `idx_lojas_usuario_id` | `@@index([usuarioId])` |
+| `categorias` | `categoria_pai_id` | `idx_categorias_categoria_pai_id` | `@@index([categoriaPaiId])` |
+| `produtos` | `loja_id` | `idx_produtos_loja_id` | `@@index([lojaId])` |
+| `produtos` | `categoria_id` | `idx_produtos_categoria_id` | `@@index([categoriaId])` |
+| `imagens_produto` | `produto_id` | `idx_imagens_produto_produto_id` | `@@index([produtoId])` |
+| `avaliacoes_produto` | `produto_id` | `idx_avaliacoes_produto_produto_id` | `@@index([produtoId])` |
+| `avaliacoes_produto` | `usuario_id` | `idx_avaliacoes_produto_usuario_id` | `@@index([usuarioId])` |
+| `avaliacoes_loja` | `loja_id` | `idx_avaliacoes_loja_loja_id` | `@@index([lojaId])` |
+| `avaliacoes_loja` | `usuario_id` | `idx_avaliacoes_loja_usuario_id` | `@@index([usuarioId])` |
+| `comentarios_avaliacao` | `usuario_id` | `idx_comentarios_avaliacao_usuario_id` | `@@index([usuarioId])` |
+| `comentarios_avaliacao` | `avaliacao_loja_id` | `idx_comentarios_avaliacao_loja_id` | `@@index([avaliacaoLojaId])` |
+| `comentarios_avaliacao` | `avaliacao_produto_id` | `idx_comentarios_avaliacao_produto_id` | `@@index([avaliacaoProdutoId])` |
+
+---
+
+## Diretrizes de Implementação no Backend (Regras de Validação)
+
+Como o Prisma ORM não impõe validações dinâmicas de restrições `CHECK` em tempo de execução na camada de aplicação, o backend implementa as seguintes regras:
+
+1. **Validação de Nota (1 a 5):**
+   - No DTO de criação/atualização de avaliação (`CreateAvaliacaoProdutoDto` e `CreateAvaliacaoLojaDto`), utilizar decorators do `class-validator`:
+     ```typescript
+     @IsInt({ message: 'A nota deve ser um numero inteiro' })
+     @Min(1, { message: 'A nota deve ser no minimo 1' })
+     @Max(5, { message: 'A nota deve ser no maximo 5' })
+     nota: number;
+     ```
+
+2. **Exclusividade de Vínculo em `ComentarioAvaliacao`:**
+   - O comentário de avaliação aceita respostas a lojas ou produtos, mas nunca a ambos simultaneamente ou a nenhum.
+   - No DTO e na camada de serviço (`ComentarioAvaliacaoService`), validar a exclusão mútua antes da operação no Prisma:
+     ```typescript
+     const hasLoja = Boolean(dto.avaliacaoLojaId);
+     const hasProduto = Boolean(dto.avaliacaoProdutoId);
+
+     if ((hasLoja && hasProduto) || (!hasLoja && !hasProduto)) {
+       throw new BadRequestException(
+         'O comentario deve ser associado exclusivamente a uma avaliacao de loja ou a uma avaliacao de produto.',
+       );
+     }
+     ```
 
 ---
 

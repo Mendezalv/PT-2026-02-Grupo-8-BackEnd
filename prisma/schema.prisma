@@ -19,8 +19,8 @@ model Usuario {
   email         String    @unique @db.VarChar(255)
   senhaHash     String    @map("senha_hash") @db.VarChar(255)
   fotoPerfilUrl String?   @map("foto_perfil_url") @db.VarChar(255)
-  createdAt     DateTime  @default(now()) @map("createdAt")
-  updatedAt     DateTime  @updatedAt @map("updatedAt")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
 
   // Relacionamentos
   lojas                Loja[]
@@ -39,14 +39,15 @@ model Loja {
   logoUrl    String?   @map("logo_url") @db.VarChar(255)
   bannerUrl  String?   @map("banner_url") @db.VarChar(255)
   stickerUrl String?   @map("sticker_url") @db.VarChar(255)
-  createdAt  DateTime  @default(now()) @map("createdAt")
-  updatedAt  DateTime  @updatedAt @map("updatedAt")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
 
   // Relacionamentos
   usuario        Usuario         @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   produtos       Produto[]
   avaliacoesLoja AvaliacaoLoja[]
 
+  @@index([usuarioId])
   @@map("lojas")
 }
 
@@ -60,6 +61,7 @@ model Categoria {
   subcategorias Categoria[] @relation("HierarquiaCategoria")
   produtos      Produto[]
 
+  @@index([categoriaPaiId])
   @@map("categorias")
 }
 
@@ -71,8 +73,8 @@ model Produto {
   descricao   String?  @db.Text
   preco       Decimal  @db.Decimal(10, 2)
   estoque     Int      @default(0)
-  createdAt   DateTime @default(now()) @map("createdAt")
-  updatedAt   DateTime @updatedAt @map("updatedAt")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
   // Relacionamentos
   loja              Loja               @relation(fields: [lojaId], references: [id], onDelete: Cascade)
@@ -80,6 +82,8 @@ model Produto {
   imagens           ImagemProduto[]
   avaliacoesProduto AvaliacaoProduto[]
 
+  @@index([lojaId])
+  @@index([categoriaId])
   @@map("produtos")
 }
 
@@ -92,6 +96,7 @@ model ImagemProduto {
   // Relacionamentos
   produto Produto @relation(fields: [produtoId], references: [id], onDelete: Cascade)
 
+  @@index([produtoId])
   @@map("imagens_produto")
 }
 
@@ -101,8 +106,8 @@ model AvaliacaoProduto {
   produtoId  Int      @map("produto_id")
   nota       Int
   comentario String?  @db.Text
-  createdAt  DateTime @default(now()) @map("createdAt")
-  updatedAt  DateTime @updatedAt @map("updatedAt")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
 
   // Relacionamentos
   usuario     Usuario               @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
@@ -110,6 +115,8 @@ model AvaliacaoProduto {
   comentarios ComentarioAvaliacao[]
 
   @@unique([usuarioId, produtoId])
+  @@index([produtoId])
+  @@index([usuarioId])
   @@map("avaliacoes_produto")
 }
 
@@ -119,8 +126,8 @@ model AvaliacaoLoja {
   lojaId     Int      @map("loja_id")
   nota       Int
   comentario String?  @db.Text
-  createdAt  DateTime @default(now()) @map("createdAt")
-  updatedAt  DateTime @updatedAt @map("updatedAt")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
 
   // Relacionamentos
   usuario     Usuario               @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
@@ -128,6 +135,8 @@ model AvaliacaoLoja {
   comentarios ComentarioAvaliacao[]
 
   @@unique([usuarioId, lojaId])
+  @@index([lojaId])
+  @@index([usuarioId])
   @@map("avaliacoes_loja")
 }
 
@@ -137,13 +146,16 @@ model ComentarioAvaliacao {
   avaliacaoLojaId    Int?     @map("avaliacao_loja_id")
   avaliacaoProdutoId Int?     @map("avaliacao_produto_id")
   conteudo           String   @db.Text
-  createdAt          DateTime @default(now()) @map("createdAt")
-  updatedAt          DateTime @updatedAt @map("updatedAt")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
 
   // Relacionamentos
   usuario          Usuario           @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   avaliacaoLoja    AvaliacaoLoja?    @relation(fields: [avaliacaoLojaId], references: [id], onDelete: Cascade)
   avaliacaoProduto AvaliacaoProduto? @relation(fields: [avaliacaoProdutoId], references: [id], onDelete: Cascade)
 
+  @@index([usuarioId])
+  @@index([avaliacaoLojaId])
+  @@index([avaliacaoProdutoId])
   @@map("comentarios_avaliacao")
 }

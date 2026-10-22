@@ -25,6 +25,11 @@ export class AvaliacaoService {
         nota: dto.nota,
         comentario: dto.comentario,
       },
+      include: {
+        usuario: {
+          select: { id: true, nome: true, username: true, fotoPerfilUrl: true },
+        },
+      },
     });
   }
 
@@ -38,6 +43,49 @@ export class AvaliacaoService {
         nota: dto.nota,
         comentario: dto.comentario,
       },
+      include: {
+        usuario: {
+          select: { id: true, nome: true, username: true, fotoPerfilUrl: true },
+        },
+      },
+    });
+  }
+
+  async findByProduto(produtoId: number) {
+    return this.prisma.avaliacaoProduto.findMany({
+      where: { produtoId },
+      include: {
+        usuario: {
+          select: { id: true, nome: true, username: true, fotoPerfilUrl: true },
+        },
+        comentarios: {
+          include: {
+            usuario: {
+              select: { id: true, nome: true, username: true, fotoPerfilUrl: true },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async findByLoja(lojaId: number) {
+    return this.prisma.avaliacaoLoja.findMany({
+      where: { lojaId },
+      include: {
+        usuario: {
+          select: { id: true, nome: true, username: true, fotoPerfilUrl: true },
+        },
+        comentarios: {
+          include: {
+            usuario: {
+              select: { id: true, nome: true, username: true, fotoPerfilUrl: true },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
     });
   }
 }

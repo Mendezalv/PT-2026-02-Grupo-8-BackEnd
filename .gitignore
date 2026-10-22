@@ -30,3 +30,9 @@ Thumbs.db
 # Build & Dist
 dist/
 build/
+
+# Reports & Python scripts
+__pycache__/
+*.pdf
+generate_pdf.py
+

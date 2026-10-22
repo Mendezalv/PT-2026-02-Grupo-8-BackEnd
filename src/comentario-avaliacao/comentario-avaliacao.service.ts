@@ -27,6 +27,35 @@ export class ComentarioAvaliacaoService {
         avaliacaoProdutoId: dto.avaliacaoProdutoId,
         conteudo: dto.conteudo,
       },
+      include: {
+        usuario: {
+          select: { id: true, nome: true, username: true, fotoPerfilUrl: true },
+        },
+      },
+    });
+  }
+
+  async findByAvaliacaoLoja(avaliacaoLojaId: number) {
+    return this.prisma.comentarioAvaliacao.findMany({
+      where: { avaliacaoLojaId },
+      include: {
+        usuario: {
+          select: { id: true, nome: true, username: true, fotoPerfilUrl: true },
+        },
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+  }
+
+  async findByAvaliacaoProduto(avaliacaoProdutoId: number) {
+    return this.prisma.comentarioAvaliacao.findMany({
+      where: { avaliacaoProdutoId },
+      include: {
+        usuario: {
+          select: { id: true, nome: true, username: true, fotoPerfilUrl: true },
+        },
+      },
+      orderBy: { createdAt: 'asc' },
     });
   }
 }

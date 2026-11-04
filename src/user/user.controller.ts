@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
@@ -43,10 +44,14 @@ export class UserController {
     return this.userService.remove(user.id!);
   }
 
-    @IsPublic()
+  @IsPublic()
   @Get('username/:username')
-  findByUsername(@Param('username') username: string) {
-    return this.userService.findByUsername(username);
+  async findByUsername(@Param('username') username: string) {
+    const user = await this.userService.findByUsername(username);
+    if (!user) {
+      throw new NotFoundException('Usuario nao encontrado.');
+    }
+    return user;
   }
   
   @Get(':id')

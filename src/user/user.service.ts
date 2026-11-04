@@ -71,7 +71,17 @@ export class UserService {
   }
 
   async findByUsername(username: string) {
-    return this.prisma.usuario.findUnique({ where: { username } });
+    const user = await this.prisma.usuario.findUnique({ where: { username } });
+    if (!user) return null;
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.nome,
+      username: user.username,
+      fotoPerfilUrl: user.fotoPerfilUrl,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
   }
 
   async findById(id: number): Promise<User> {

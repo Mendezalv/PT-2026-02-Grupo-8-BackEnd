@@ -43,6 +43,12 @@ export class UserController {
     return this.userService.remove(user.id!);
   }
 
+    @IsPublic()
+  @Get('username/:username')
+  findByUsername(@Param('username') username: string) {
+    return this.userService.findByUsername(username);
+  }
+  
   @Get(':id')
   findById(@Param('id', ParseIntPipe) id: number) {
     return this.userService.findById(id);

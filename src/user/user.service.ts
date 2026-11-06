@@ -9,17 +9,32 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { Usuario } from '@prisma/client';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
+
+  private toUser(user: Usuario): User {
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.nome,
+      username: user.username,
+      fotoPerfilUrl: user.fotoPerfilUrl,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+  }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     if (
       createUserDto.confirmPassword &&
       createUserDto.password !== createUserDto.confirmPassword
     ) {
-      throw new BadRequestException('A confirmacao de senha nao confere com a senha.');
+      throw new BadRequestException(
+        'A confirmacao de senha nao confere com a senha.',
+      );
     }
 
     const existingEmail = await this.findByEmail(createUserDto.email);
@@ -44,15 +59,7 @@ export class UserService {
       },
     });
 
-    return {
-      id: createdUser.id,
-      email: createdUser.email,
-      name: createdUser.nome,
-      username: createdUser.username,
-      fotoPerfilUrl: createdUser.fotoPerfilUrl,
-      createdAt: createdUser.createdAt,
-      updatedAt: createdUser.updatedAt,
-    };
+    return this.toUser(createdUser);
   }
 
   async findByEmail(email: string) {
@@ -70,18 +77,9 @@ export class UserService {
     };
   }
 
-  async findByUsername(username: string) {
+  async findByUsername(username: string): Promise<User | null> {
     const user = await this.prisma.usuario.findUnique({ where: { username } });
-    if (!user) return null;
-    return {
-      id: user.id,
-      email: user.email,
-      name: user.nome,
-      username: user.username,
-      fotoPerfilUrl: user.fotoPerfilUrl,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    };
+    return user ? this.toUser(user) : null;
   }
 
   async findById(id: number): Promise<User> {
@@ -89,22 +87,16 @@ export class UserService {
     if (!user) {
       throw new NotFoundException('Usuario nao encontrado.');
     }
-    return {
-      id: user.id,
-      email: user.email,
-      name: user.nome,
-      username: user.username,
-      fotoPerfilUrl: user.fotoPerfilUrl,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    };
+    return this.toUser(user);
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     await this.findById(id);
 
     if (updateUserDto.username) {
-      const existingUsername = await this.findByUsername(updateUserDto.username);
+      const existingUsername = await this.findByUsername(
+        updateUserDto.username,
+      );
       if (existingUsername && existingUsername.id !== id) {
         throw new ConflictException('O username informado ja esta em uso.');
       }
@@ -131,15 +123,7 @@ export class UserService {
       data,
     });
 
-    return {
-      id: updatedUser.id,
-      email: updatedUser.email,
-      name: updatedUser.nome,
-      username: updatedUser.username,
-      fotoPerfilUrl: updatedUser.fotoPerfilUrl,
-      createdAt: updatedUser.createdAt,
-      updatedAt: updatedUser.updatedAt,
-    };
+    return this.toUser(updatedUser);
   }
 
   async remove(id: number): Promise<{ message: string }> {
